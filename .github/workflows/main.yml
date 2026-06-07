@@ -1,0 +1,44 @@
+name: Build DS2API Project
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.22' # Đảm bảo phiên bản Go phù hợp với dự án
+
+    - name: Build Go backend
+      run: |
+        cd ds2api
+        go mod tidy
+        go build -o ds2api ./cmd/ds2api/main.go
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18' # Đảm bảo phiên bản Node.js phù hợp với dự án React
+
+    - name: Install frontend dependencies and build
+      run: |
+        cd ds2api/webui
+        npm install
+        npm run build
+
+    - name: Archive production artifacts (Optional)
+      uses: actions/upload-artifact@v3
+      with:
+        name: ds2api-artifacts
+        path: |
+          ds2api/ds2api
+          ds2api/webui/dist
