@@ -51,12 +51,10 @@ services:
       # --- Required: API Key for clients ---
       # This is the API key you'll use in OpenAI client
       - key: API_KEY
-        sync: false
         generateValue: true  # Auto-generate if not provided
       
       # --- Admin Panel ---
       - key: DS2API_ADMIN_KEY
-        sync: false
         generateValue: true
       
       # --- Optional: Model Aliases (JSON format) ---
