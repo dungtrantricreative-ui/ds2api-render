@@ -1,0 +1,78 @@
+# ============================================================
+# DS2API - Render.com Blueprint
+# 
+# This file defines the infrastructure for deploying DS2API
+# on Render.com as a Web Service.
+#
+# Deployment Steps:
+# 1. Push this repo to your GitHub account
+# 2. In Render Dashboard: New + > Blueprint
+# 3. Connect your GitHub repo
+# 4. Render will read this file and create the service
+# ============================================================
+
+services:
+  - type: web
+    name: ds2api
+    runtime: docker
+    plan: free
+    region: singapore  # Change to: oregon, ohio, virginia, frankfurt, singapore
+    
+    # Health check endpoint
+    healthCheckPath: /healthz
+    
+    # Auto-deploy on git push
+    autoDeploy: true
+    
+    # Dockerfile to use
+    dockerfilePath: ./Dockerfile
+    
+    # Maximum startup time (seconds)
+    # Build can take 3-5 minutes due to Go compilation + WebUI build
+    
+    envVars:
+      # --- Required: DeepSeek Account Credentials ---
+      # Option 1: Email + Password
+      - key: DS_EMAIL
+        sync: false  # Marks as sensitive (won't show in dashboard)
+      - key: DS_PASSWORD
+        sync: false
+      
+      # Option 2: Second account (optional)
+      - key: DS_EMAIL_2
+        sync: false
+      - key: DS_PASSWORD_2
+        sync: false
+      
+      # Option 3: Token-based auth (optional)
+      - key: DS_TOKEN
+        sync: false
+      
+      # --- Required: API Key for clients ---
+      # This is the API key you'll use in OpenAI client
+      - key: API_KEY
+        sync: false
+        generateValue: true  # Auto-generate if not provided
+      
+      # --- Admin Panel ---
+      - key: DS2API_ADMIN_KEY
+        sync: false
+        generateValue: true
+      
+      # --- Optional: Model Aliases (JSON format) ---
+      - key: MODEL_ALIASES
+        value: '{"gpt-4o":"deepseek-v4-flash","gpt-5.5":"deepseek-v4-flash","gpt-5.3-codex":"deepseek-v4-pro","o3":"deepseek-v4-pro"}'
+      
+      # --- Logging ---
+      - key: LOG_LEVEL
+        value: INFO
+      
+      # --- Timezone ---
+      - key: TZ
+        value: Asia/Shanghai
+    
+    # Disk for persistent config (optional - config stored in env vars)
+    # disk:
+    #   name: data
+    #   mountPath: /data
+    #   sizeGB: 1
