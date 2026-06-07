@@ -8,7 +8,7 @@ FROM node:24-alpine AS webui-builder
 
 WORKDIR /app/webui
 COPY webui/package.json webui/package-lock.json* ./
-RUN npm ci --omit=dev --ignore-scripts 2>/dev/null || npm install --omit=dev --ignore-scripts
+RUN npm install
 COPY config.example.json /app/config.example.json
 COPY webui ./
 RUN npm run build
@@ -40,7 +40,7 @@ RUN apk add --no-cache ca-certificates tzdata python3 \
 # Copy built artifacts
 COPY --from=go-builder /out/ds2api /usr/local/bin/ds2api
 COPY --from=go-builder /app/config.example.json /app/config.example.json
-COPY --from=webui-builder /app/static/admin /app/static/admin
+COPY --from=webui-builder /app/webui/dist /app/static/admin
 
 # Copy scripts
 COPY scripts/render-entrypoint.sh /usr/local/bin/render-entrypoint.sh
