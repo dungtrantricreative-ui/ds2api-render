@@ -21,10 +21,7 @@ COPY go.mod go.sum ./
 RUN go mod download
 COPY . .
 ARG BUILD_VERSION
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \
-    -buildvcs=false \
-    -ldflags="-s -w -X ds2api/internal/version.BuildVersion=${BUILD_VERSION:-render}" \
-    -o /out/ds2api ./cmd/ds2api/main.go
+RUN go build -o /out/ds2api cmd/ds2api/main.go
 
 # -------- Stage 3: Runtime --------
 FROM alpine:3.20 AS runtime
