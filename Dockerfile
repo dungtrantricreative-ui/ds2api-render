@@ -40,7 +40,7 @@ RUN apk add --no-cache ca-certificates tzdata python3 \
 # Copy built artifacts
 COPY --from=go-builder /out/ds2api /usr/local/bin/ds2api
 COPY --from=go-builder /app/config.example.json /app/config.example.json
-COPY --from=webui-builder /app/webui/dist /app/static/admin
+COPY --from=webui-builder /app/static/admin /app/static/admin
 
 # Copy scripts
 COPY scripts/render-entrypoint.sh /usr/local/bin/render-entrypoint.sh
